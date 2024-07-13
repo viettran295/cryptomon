@@ -1,5 +1,5 @@
 CONKY=/etc/conky
-APP=cointrack
+APP=cryptomon
 
 all: build
 	sudo chmod a+wrx ${APP}
