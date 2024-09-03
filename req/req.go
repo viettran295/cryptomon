@@ -23,8 +23,8 @@ func GetAllPrices() (CoinCap, error) {
 	req, _ := http.NewRequest("GET", URL, nil)
 	req.Header.Set("Authorization", "Bearer")
 	resp, err := client.Do(req)
-	if err != nil || resp.Body == nil {
-		log.Println("Error while getting data or response is nil")
+	if err != nil || resp.Body == nil  || resp.StatusCode != 200 {
+		log.Println("Error while getting data or response is nil, ", resp.Status)
 		return CoinCap{}, err
 	}
 	defer resp.Body.Close()
