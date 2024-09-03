@@ -1,9 +1,11 @@
 CONKY=/etc/conky
+POLYBAR=~/.config/polybar
 APP=cryptomon
 
 all: build
 	sudo chmod a+wrx ${APP}
-	sudo mv ./${APP} ${CONKY}
+	sudo cp ./${APP} ${CONKY} 
+	sudo cp ./${APP} ${POLYBAR}
 
 build: 
-	go build -o ${APP}
+	go build -ldflags="-w -s" -o ${APP}
