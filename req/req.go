@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
 const URL string = "https://api.coincap.io/v2/assets"
@@ -19,12 +22,18 @@ type CoinCap struct {
 }
 
 func GetAllPrices() (CoinCap, error) {
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("Can not loat env variables")
+	}
+	apiKey := os.Getenv("COINCAP_KEY")
+	bearerWKey := "Bearer " + apiKey
 	client := &http.Client{}
 	req, _ := http.NewRequest("GET", URL, nil)
-	req.Header.Set("Authorization", "Bearer")
+	req.Header.Set("Authorization", bearerWKey)
 	resp, err := client.Do(req)
-	if err != nil || resp.Body == nil  || resp.StatusCode != 200 {
-		log.Println("Error while getting data or response is nil, ", resp.Status)
+	if err != nil || resp.Body == nil || resp.StatusCode != 200 {
+		log.Println(resp.Status)
 		return CoinCap{}, err
 	}
 	defer resp.Body.Close()
