@@ -24,7 +24,7 @@ type CoinCap struct {
 func GetAllPrices() (CoinCap, error) {
 	err := godotenv.Load()
 	if err != nil {
-		log.Println("Can not loat env variables")
+		log.Println("Can not load env variables")
 	}
 	apiKey := os.Getenv("COINCAP_KEY")
 	bearerWKey := "Bearer " + apiKey
