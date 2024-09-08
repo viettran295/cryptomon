@@ -5,44 +5,64 @@ import (
 	"log"
 	"net/http"
 	"os"
-
-	"github.com/joho/godotenv"
 )
 
-const URL string = "https://api.coincap.io/v2/assets"
+const (
+	URLAllCoins string = "https://api.coincap.io/v2/assets/"
+	URLCoin     string = "https://api.coincap.io/v2/assets/"
+)
 
-type CoinCap struct {
-	Data []struct {
-		ID           string `json:"id"`
-		Symbol       string `json:"Symbol"`
-		Name         string `json:"name"`
-		PriceUSD     string `json:"priceUsd"`
-		ChangePer24h string `json:"changePercent24Hr"`
-	}
+type CoinCapData struct {
+	ID           string `json:"id"`
+	Symbol       string `json:"Symbol"`
+	Name         string `json:"name"`
+	PriceUSD     string `json:"priceUsd"`
+	ChangePer24h string `json:"changePercent24Hr"`
+}
+type AllCoinCap struct {
+	Data []CoinCapData `json:"data"`
+}
+type SingleCoinCap struct {
+	Data CoinCapData `json:"data"`
 }
 
-func GetAllPrices() (CoinCap, error) {
-	err := godotenv.Load()
-	if err != nil {
-		log.Println("Can not load env variables")
-	}
+func httpRequest(url string, symbol string) (*http.Response, error) {
 	apiKey := os.Getenv("COINCAP_KEY")
 	bearerWKey := "Bearer " + apiKey
 	client := &http.Client{}
-	req, _ := http.NewRequest("GET", URL, nil)
+	req, _ := http.NewRequest("GET", url+symbol, nil)
 	req.Header.Set("Authorization", bearerWKey)
-	resp, err := client.Do(req)
+	return client.Do(req)
+}
+
+func GetAllPrices() (AllCoinCap, error) {
+	resp, err := httpRequest(URLAllCoins, "")
 	if err != nil || resp.Body == nil || resp.StatusCode != 200 {
 		log.Println(resp.Status)
-		return CoinCap{}, err
+		return AllCoinCap{}, err
 	}
 	defer resp.Body.Close()
 
-	var data CoinCap
+	var data AllCoinCap
 	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
 		log.Println("Error while processing json data")
-		return CoinCap{}, err
+		return AllCoinCap{}, err
 	}
 	return data, nil
+}
 
+func GetPrice(symbol string) (SingleCoinCap, error) {
+	resp, err := httpRequest(URLCoin, symbol)
+	if err != nil || resp.Body == nil || resp.StatusCode != 200 {
+		log.Println(resp.Status)
+		return SingleCoinCap{}, err
+	}
+	defer resp.Body.Close()
+
+	var data SingleCoinCap
+	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+		log.Println("Error while processing json data")
+		return SingleCoinCap{}, err
+	}
+	return data, nil
 }
