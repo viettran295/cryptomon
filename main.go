@@ -29,7 +29,7 @@ func main() {
 	price, _ := strconv.ParseFloat(coinCap.Data.PriceUSD, 64)
 	percentProf := utils.RealTimeProfitLoss(transactions, coinCap.Data.Symbol, price)
 	vol, _ := strconv.ParseFloat(coinCap.Data.ChangePer24h, 64)
-	fmt.Printf("%-5s %-7.2f %.2f%% %6.2f%%\n", coinCap.Data.Symbol, price, vol, percentProf)
+	fmt.Printf("%s | %.2f | %.2f%% | %.2f%%\n", coinCap.Data.Symbol, price, vol, percentProf)
 
 	// Get all crypto prices
 	// coinCap, err := req.GetAllPrices()
