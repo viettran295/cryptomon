@@ -5,7 +5,7 @@ APP=cryptomon
 ENV=.env
 
 all: build
-	sudo chmod a+wrx ${APP}
+	sudo chmod a+x ${APP}
 	for dest in ${DEST}; do \
 		sudo cp ./${APP} ${ENV} $$dest; \
 	done
