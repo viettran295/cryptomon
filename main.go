@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 )
 
 const HOUBI_DATA_PATH = "/home/viettr/Desktop/Dev/cryptomon/huobi.json"
@@ -25,11 +26,14 @@ func main() {
 	transactions := utils.DecodeTransactions(TransactionsFile)
 
 	// Get single crypto price
-	coinCap, err := req.GetPrice(tracks[0])
-	price, _ := strconv.ParseFloat(coinCap.Data.PriceUSD, 64)
-	percentProf := utils.RealTimeProfitLoss(transactions, coinCap.Data.Symbol, price)
-	vol, _ := strconv.ParseFloat(coinCap.Data.ChangePer24h, 64)
-	fmt.Printf("%s | %.2f | %.2f%% | %.2f%%\n", coinCap.Data.Symbol, price, vol, percentProf)
+	for {
+		coinCap, _ := req.GetPrice(tracks[0])
+		price, _ := strconv.ParseFloat(coinCap.Data.PriceUSD, 64)
+		percentProf := utils.RealTimeProfitLoss(transactions, coinCap.Data.Symbol, price)
+		vol, _ := strconv.ParseFloat(coinCap.Data.ChangePer24h, 64)
+		fmt.Printf("%s * %.2f * %.2f%% * %.2f%%\n", coinCap.Data.Symbol, price, vol, percentProf)
+		time.Sleep(time.Minute * 5)
+	} 
 
 	// Get all crypto prices
 	// coinCap, err := req.GetAllPrices()
